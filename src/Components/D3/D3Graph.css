@@ -1,0 +1,44 @@
+.d3 {
+    margin: 0 auto;
+    position: relative;
+}
+
+.graph {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    text-align : center;
+    /* background-color:#f3f3f3; */
+}
+
+svg { 
+    width: 100%;
+    height: 100%;
+}
+
+.d3Text {
+    fill: white;
+    font-size: 16px;
+    font-family: sans-serif;
+}
+
+.d3Keyword {
+    fill: white;
+    font-size: 20px;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.d3KeywordNode {
+    fill: black;
+    height: 36px;
+}
+
+rect {
+    outline: 1px solid rgb(50, 50, 50);
+    border-radius: 10px;
+    /* width: 110px; */
+    height: 30px;
+}
+
