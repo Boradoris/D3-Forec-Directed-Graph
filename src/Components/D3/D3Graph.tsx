@@ -15,20 +15,20 @@ const D3Graph:React.FC<any> = ({data1, data2}) => {
     const d3Obj1: D3Data[] = ObjArray.createD3Obj(data1);
     const d3Obj2: D3Data[] = ObjArray.createD3Obj(data2);
 
-    const sameKeyword = ObjArray.sameNodes(d3Obj1, d3Obj2); // 중복 키워드
+    const sameKeyword = ObjArray.sameNodes(d3Obj1, d3Obj2); // 중복 키워드 초기화
 
     const nodes = ObjArray.createNodes(d3Obj1, d3Obj2); // 중복 키워드 제거 후, 배열에 전체 저장
-    const links = createLinks(nodes);
+    const links = createLinks(nodes); //nodes의 source, target 지정 (좌표)
     
     function createLinks(nodes: D3Data[]) {
-        let links: Array<object> = [];
+        const links: Array<object> = [];
         let nodesHalfLength = 0;
         
-        // 첫 번째 노드 그룹
+        // 첫 번째 노드 그룹 링크 지정
         for(let i=1; i<nodes.length; i++) {
+                // nodesHalfLength === 두 번째 키워드의 nodeId 값
                 if(nodes[i].id === 0) {
                     nodesHalfLength = i;
-                    nodes[i].group = 1;
                     break;
                 } 
                 let obj = {
@@ -38,9 +38,8 @@ const D3Graph:React.FC<any> = ({data1, data2}) => {
                 links.push(obj);
         }
 
-        // 두 번째 노드 그룹
+        // 두 번째 노드 그룹 링크 지정
         for(let j=nodesHalfLength+1; j<nodes.length; j++) {
-            nodes[j].group = 1;
             let obj = {
                 source : nodes[j].nodeId,
                 target : nodes[nodesHalfLength].nodeId
@@ -49,8 +48,8 @@ const D3Graph:React.FC<any> = ({data1, data2}) => {
         }
 
         // 중복 노드 그룹
+        // 각 키워드에 대한 링크 연결
         for(let k=0; k<sameKeyword.length; k++) {
-            sameKeyword[k].group = 2;
             let obj = {
                 source : sameKeyword[k].nodeId,
                 target : nodes[nodesHalfLength].nodeId
@@ -80,14 +79,16 @@ const D3Graph:React.FC<any> = ({data1, data2}) => {
     const svg = d3.select('#d3Graph');
     const zoom = d3.zoom().scaleExtent([0.8, 2]).on('zoom', (e:any) => svg.attr('transform', e.transform));
     d3.select('svg').call(zoom);
-
-    const forceGraph = {
-        createGraph: function (nodes: D3Data[], links: Array<{}>) {
+    
+    const createForceGraph = (nodes: D3Data[], links: Array<{}>) => {
+            svg.select(`#nodes_`).remove();
             
             const keyword = 'nodes_';
             let centerX: any = 0;
             let centerY = 330;
-            const d3Size = document.querySelector(`.graph`)?.getBoundingClientRect();
+
+            // center 값 초기화
+            const d3Size = document.querySelector<Element>(`.graph`)?.getBoundingClientRect();
             centerX = d3Size?.width
             centerX = centerX/2 - 30;
 
@@ -225,14 +226,8 @@ const D3Graph:React.FC<any> = ({data1, data2}) => {
                 }
             return svg.node();
         }
-    }
 
-    function newGraph(nodes: D3Data[], links: object[]) {
-        svg.select(`#nodes_`).remove();
-        forceGraph.createGraph(nodes, links); 
-    }
-
-    newGraph(nodes, links);
+        createForceGraph(nodes, links);
 
     return (
         <div className='d3'>
