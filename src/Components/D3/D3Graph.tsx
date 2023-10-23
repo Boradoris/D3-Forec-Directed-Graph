@@ -79,13 +79,20 @@ const D3Graph:React.FC<any> = ({data1, data2}) => {
     //svg 변수 할당 및 zoom 함수 적용
     const svg = d3.select('#d3Graph');
     const zoom = d3.zoom().scaleExtent([0.8, 2]).on('zoom', (e:any) => svg.attr('transform', e.transform));
-
     d3.select('svg').call(zoom);
 
     const forceGraph = {
-        createGraph: function (nodes: D3Data, links: Array<{}>, centerX: number, centerY: number) {
+        createGraph: function (nodes: D3Data[], links: Array<{}>) {
+            
             const keyword = 'nodes_';
+            let centerX: any = 0;
+            let centerY = 330;
+            const d3Size = document.querySelector(`.graph`)?.getBoundingClientRect();
+            centerX = d3Size?.width
+            centerX = centerX/2 - 30;
 
+             // svg 초기 scale 지정
+            const g = svg.append('g').attr('id', `${keyword}`).attr('transform', `translate(${centerX/3}, ${centerY/3}) scale(${0.7})`);
             const simulation = d3.forceSimulation(nodes)
                 .force('link', d3.forceLink(links).id((d: D3Data) => d.nodeId))
                 .force('charge', d3.forceManyBody().strength(-700)) // 모든 노드 간에 힘, 양이면 당기고 음수면 반발
@@ -111,9 +118,6 @@ const D3Graph:React.FC<any> = ({data1, data2}) => {
                 .force('collide', d3.forceCollide().radius(function(d: D3Data) {
                     return d.id === 0 ? d.distance * 5 : d.distance * 3.4;
                 })); // 노드의 겹침 정도
-                    
-            // svg 초기 scale 지정
-            const g = svg.append('g').attr('id', `${keyword}`).attr('transform', `translate(${250}, ${50}) scale(${0.7})`);
 
             const link = g.append('g')
                 .attr('stroke', 'black')
@@ -223,12 +227,12 @@ const D3Graph:React.FC<any> = ({data1, data2}) => {
         }
     }
 
-    function newGraph(nodes: any, links: object[], width: number, hight: number) {
+    function newGraph(nodes: D3Data[], links: object[]) {
         svg.select(`#nodes_`).remove();
-        forceGraph.createGraph(nodes, links, width, hight); 
+        forceGraph.createGraph(nodes, links); 
     }
 
-    newGraph(nodes, links, 740, 400);
+    newGraph(nodes, links);
 
     return (
         <div className='d3'>

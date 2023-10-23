@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './Search.css';
 import D3Graph from '../D3/D3Graph';
 import * as DateFormat from '../../FunctionFiles/DateFormat';
